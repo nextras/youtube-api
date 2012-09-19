@@ -27,6 +27,9 @@ class Video extends Nette\Object
 	/** @var string */
 	public $url;
 
+	/** @var int */
+	public $duration;
+
 	/** @var array */
 	public $thumbs;
 

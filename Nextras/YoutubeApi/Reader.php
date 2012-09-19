@@ -82,6 +82,9 @@ class Reader extends Nette\Object
 
 		$video->url = 'http://www.youtube.com/watch?v=' . $videoId;
 
+		$duration = $xpath->query('//yt:duration')->item(0);
+		$video->duration = (int) $duration->getAttribute('seconds');
+
 		$thumbs = $xpath->query('//media:thumbnail');
 		foreach ($thumbs as $thumb) {
 			$video->thumbs[] = (object) array(

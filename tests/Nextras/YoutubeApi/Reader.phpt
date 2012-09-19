@@ -19,6 +19,7 @@ Assert::true($video instanceof Nextras\YoutubeApi\Video);
 Assert::same('Nette Framework and Flash Messages', $video->title);
 Assert::same('http://www.youtube.com/watch?v=wsaPIG6kvlo', $video->url);
 Assert::null($video->description);
+Assert::same(334, $video->duration);
 
 Assert::same(4, count($video->thumbs));
 Assert::true(!empty($video->thumbs[0]->url));
