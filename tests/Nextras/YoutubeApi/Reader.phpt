@@ -25,3 +25,8 @@ Assert::true(!empty($video->thumbs[0]->url));
 Assert::true(!empty($video->thumbs[1]->width));
 Assert::true(!empty($video->thumbs[2]->height));
 Assert::true(!empty($video->thumbs[3]->time));
+
+
+
+$video2 = $reader->getVideoByUrl($video->url);
+Assert::equal($video, $video2);

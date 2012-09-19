@@ -19,8 +19,27 @@ class Reader extends Nette\Object
 {
 
 	/**
+	 * Fetchs video data by youtube url
+	 * @param  string  youtube url
+	 * @return Video
+	 */
+	public function getVideoByUrl($videoUrl)
+	{
+		$url = new Nette\Http\Url($videoUrl);
+		$params = $url->query;
+        parse_str(urldecode($params), $params);
+		if (stripos($url->host, 'youtube.com') === FALSE || empty($params['v'])) {
+			throw new Nette\InvalidArgumentException('videoUrl must be valid youtube url.');
+		}
+
+		return $this->getVideo($params['v']);
+	}
+
+
+
+	/**
 	 * Fetchs video data
-	 * @param  string  $videoId
+	 * @param  string  video id
 	 * @return Video
 	 */
 	public function getVideo($videoId)
