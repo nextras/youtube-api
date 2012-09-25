@@ -27,7 +27,7 @@ class Reader extends Nette\Object
 	{
 		$url = new Nette\Http\Url($videoUrl);
 		$params = $url->query;
-        parse_str(urldecode($params), $params);
+		parse_str(urldecode($params), $params);
 		if (stripos($url->host, 'youtube.com') === FALSE || empty($params['v'])) {
 			throw new Nette\InvalidArgumentException('videoUrl must be valid youtube url.');
 		}
