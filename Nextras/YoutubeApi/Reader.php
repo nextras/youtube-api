@@ -11,6 +11,7 @@
 
 namespace Nextras\YoutubeApi;
 
+use Kdyby\Curl\CurlWrapper;
 use Nette;
 
 
@@ -49,11 +50,7 @@ class Reader extends Nette\Object
 	 */
 	public function getVideo($videoId)
 	{
-		$data = $this->getData($videoId);
-		if (!$data)
-			return FALSE;
-
-		return $this->parseData($data, $videoId);
+		return $this->parseData($this->getData($videoId), $videoId);
 	}
 
 
@@ -61,11 +58,13 @@ class Reader extends Nette\Object
 	protected function getData($videoId)
 	{
 		$url = "http://gdata.youtube.com/feeds/api/videos/{$videoId}";
-		$content = @file_get_contents($url);
-		if (!$content)
-			return FALSE;
+		$curl = new CurlWrapper($url, Nette\Http\Request::GET);
 
-		return $content;
+		if (!($response = $curl->execute())) {
+			throw new \RuntimeException('Unable to parse YouTube video: ' .  $curl->response);
+		}
+
+		return $curl->response;
 	}
 
 
@@ -82,8 +81,9 @@ class Reader extends Nette\Object
 		$video->title = $title->wholeText;
 
 		$description = $xpath->query('//media:description/text()')->item(0);
-		if ($description)
+		if ($description) {
 			$video->description = $description->wholeText;
+		}
 
 		$video->url = 'http://www.youtube.com/watch?v=' . $videoId;
 
