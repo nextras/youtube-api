@@ -18,7 +18,7 @@
 	"require": {
 		"php": ">=5.3.0",
 		"nette/nette": ">=2.0.0",
-		"kdyby/curl": "1.0.x"
+		"kdyby/curl": ">=1.0.0"
 	},
 	"require-dev": {
 		"nette/tester": "dev-master"
