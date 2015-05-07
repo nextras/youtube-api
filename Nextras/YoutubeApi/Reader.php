@@ -11,13 +11,23 @@
 
 namespace Nextras\YoutubeApi;
 
+use DateInterval;
 use Kdyby\Curl\CurlWrapper;
+use Kdyby\CurlCaBundle\CertificateHelper;
 use Nette;
-
 
 
 class Reader extends Nette\Object
 {
+	/** @var string */
+	private $apiKey;
+
+
+	public function __construct($apiKey)
+	{
+		$this->apiKey = $apiKey;
+	}
+
 
 	/**
 	 * Fetchs video data by youtube url
@@ -57,11 +67,12 @@ class Reader extends Nette\Object
 
 	protected function getData($videoId)
 	{
-		$url = "http://gdata.youtube.com/feeds/api/videos/{$videoId}";
+		$url = "https://www.googleapis.com/youtube/v3/videos?key={$this->apiKey}&part=snippet,contentDetails&id={$videoId}";
 		$curl = new CurlWrapper($url, Nette\Http\Request::GET);
+		$curl->setOption('CAINFO', CertificateHelper::getCaInfoFile());
 
 		if (!($response = $curl->execute())) {
-			throw new \RuntimeException('Unable to parse YouTube video: ' .  $curl->response);
+			throw new \RuntimeException('Unable to parse YouTube video: ' .  $curl->error);
 		}
 
 		return $curl->response;
@@ -71,33 +82,27 @@ class Reader extends Nette\Object
 
 	protected function parseData($data, $videoId)
 	{
-		$doc = new \DOMDocument();
-		$doc->loadXML($data);
-
-		$xpath = new \DOMXPath($doc);
-		$video = new Video;
-
-		$title = $xpath->query('//media:title/text()')->item(0);
-		$video->title = $title->wholeText;
-
-		$description = $xpath->query('//media:description/text()')->item(0);
-		if ($description) {
-			$video->description = $description->wholeText;
+		$data = Nette\Utils\Json::decode($data);
+		if (!isset($data->items[0]->snippet) || !isset($data->items[0]->contentDetails)) {
+			throw new \RuntimeException();
 		}
 
+		$snippet = $data->items[0]->snippet;
+		$details = $data->items[0]->contentDetails;
+
+		$video = new Video;
+
+		$video->title = $snippet->title;
+		$video->description = $snippet->description;
 		$video->url = 'http://www.youtube.com/watch?v=' . $videoId;
 
-		$duration = $xpath->query('//yt:duration')->item(0);
-		$video->duration = (int) $duration->getAttribute('seconds');
+		$interval = new DateInterval($details->duration);
+		$video->duration = $interval->days * 86400 + $interval->h * 3600 + $interval->i * 60 + $interval->s;
 
-		$thumbs = $xpath->query('//media:thumbnail');
-		foreach ($thumbs as $thumb) {
-			$video->thumbs[] = (object) array(
-				'url'    => $thumb->getAttribute('url'),
-				'time'   => $thumb->getAttribute('time'),
-				'width'  => $thumb->getAttribute('width'),
-				'height' => $thumb->getAttribute('height'),
-			);
+		foreach (['default', 'medium', 'high', 'standard', 'maxres'] as $type) {
+			if (isset($snippet->thumbnails->$type)) {
+				$video->thumbs[$type] = $snippet->thumbnails->$type;
+			}
 		}
 
 		return $video;
