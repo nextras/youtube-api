@@ -17,12 +17,12 @@ $config = parse_ini_file(__DIR__ . '/../../php.ini');
 $apiKey = $config['googleApiKey'];
 
 $reader = new Nextras\YoutubeApi\Reader($apiKey);
-$video  = $reader->getVideo('wsaPIG6kvlo');
+$video = $reader->getVideo('wsaPIG6kvlo');
 
 Assert::true($video instanceof Nextras\YoutubeApi\Video);
 Assert::same('Nette Framework and Flash Messages', $video->title);
 Assert::same('http://www.youtube.com/watch?v=wsaPIG6kvlo', $video->url);
-Assert::same('', $video->description);
+Assert::same(' ', $video->description);
 Assert::same(335, $video->duration);
 
 Assert::same(3, count($video->thumbs));
@@ -36,3 +36,19 @@ foreach (['default', 'medium', 'high'] as $type) {
 
 $video2 = $reader->getVideoByUrl($video->url);
 Assert::equal($video, $video2);
+
+Assert::throws(function () use ($reader) {
+	$reader->getVideo('notExistYouTubeCode');
+}, RuntimeException::class, "Empty YouTube response, probably wrong 'notExistYouTubeCode' video id.");
+
+class MockerReader extends Nextras\YoutubeApi\Reader
+{
+	/** @var string */
+	protected $youtubeFetchUrl = 'http://not-exist-youtube.url'; //do not add %s placeholder!
+}
+
+$mockedReader = new MockerReader($apiKey);
+
+Assert::throws(function () use ($mockedReader) {
+	$mockedReader->getVideo('wsaPIG6kvlo');
+}, \GuzzleHttp\Exception\ConnectException::class);
