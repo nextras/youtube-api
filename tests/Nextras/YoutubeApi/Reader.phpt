@@ -40,15 +40,3 @@ Assert::equal($video, $video2);
 Assert::throws(function () use ($reader) {
 	$reader->getVideo('notExistYouTubeCode');
 }, RuntimeException::class, "Empty YouTube response, probably wrong 'notExistYouTubeCode' video id.");
-
-class MockerReader extends Nextras\YoutubeApi\Reader
-{
-	/** @var string */
-	protected $youtubeFetchUrl = 'http://not-exist-youtube.url'; //do not add %s placeholder!
-}
-
-$mockedReader = new MockerReader($apiKey);
-
-Assert::throws(function () use ($mockedReader) {
-	$mockedReader->getVideo('wsaPIG6kvlo');
-}, \GuzzleHttp\Exception\ConnectException::class);

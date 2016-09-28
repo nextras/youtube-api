@@ -17,13 +17,13 @@ use Nette;
 class Reader extends Nette\Object
 {
 	/** @var string */
+	const FETCH_URL = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
+
+	/** @var string */
 	private $apiKey;
 
 	/** @var Client */
 	private $httpClient;
-
-	/** @var string */
-	protected $youtubeFetchUrl = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
 
 	public function __construct($apiKey, Client $httpClient = null)
@@ -75,7 +75,7 @@ class Reader extends Nette\Object
 
 	protected function getData($videoId)
 	{
-		$url = sprintf($this->youtubeFetchUrl, $this->apiKey, $videoId);
+		$url = sprintf(self::FETCH_URL, $this->apiKey, $videoId);
 		$response = $this->httpClient->get($url, [
 			'http_errors' => false,
 		]);
