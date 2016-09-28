@@ -1,12 +1,9 @@
 <?php
 
 /**
- * This file is part of the Nextras community extensions of Nette Framework
- *
- * Copyright (c) 2012 Jan Skrasek (http://jan.skrasek.com)
- *
+ * This file is part of the YoutubeApi library.
  * @license    MIT
- * @link       https://github.com/nextras
+ * @link       https://github.com/nextras/youtube-api
  */
 
 namespace Nextras\YoutubeApi;
@@ -17,7 +14,6 @@ use Nette;
 
 class Video extends Nette\Object
 {
-
 	/** @var string */
 	public $title;
 
@@ -32,5 +28,4 @@ class Video extends Nette\Object
 
 	/** @var array */
 	public $thumbs;
-
 }

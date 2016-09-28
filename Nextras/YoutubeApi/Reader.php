@@ -1,12 +1,9 @@
 <?php
 
 /**
- * This file is part of the Nextras community extensions of Nette Framework
- *
- * Copyright (c) 2012 Jan Skrasek (http://jan.skrasek.com)
- *
+ * This file is part of the YoutubeApi library.
  * @license    MIT
- * @link       https://github.com/nextras
+ * @link       https://github.com/nextras/youtube-api
  */
 
 namespace Nextras\YoutubeApi;
@@ -42,20 +39,20 @@ class Reader extends Nette\Object
 
 
 	/**
-	 * Fetchs video data by youtube url
-	 * @param  string  youtube url
+	 * Fetches video data by youtube url
+	 * @param  string  $videoUrl YouTube url
 	 * @return Video
 	 */
 	public function getVideoByUrl($videoUrl)
 	{
 		$url = new Nette\Http\Url($videoUrl);
 
-		if (stripos($url->host, 'youtu.be') !== FALSE) {
+		if (stripos($url->host, 'youtu.be') !== false) {
 			return $this->getVideo(trim($url->getPath(), '/'));
 		}
 
 		$videoId = $url->getQueryParameter('v');
-		if (stripos($url->host, 'youtube.com') === FALSE || $videoId === NULL) {
+		if (stripos($url->host, 'youtube.com') === false || $videoId === null) {
 			throw new Nette\InvalidArgumentException('videoUrl must be valid youtube url.');
 		}
 
@@ -66,7 +63,7 @@ class Reader extends Nette\Object
 
 	/**
 	 * Fetchs video data
-	 * @param  string  video id
+	 * @param  string  $videoId
 	 * @return Video
 	 */
 	public function getVideo($videoId)
@@ -80,7 +77,7 @@ class Reader extends Nette\Object
 	{
 		$url = sprintf($this->youtubeFetchUrl, $this->apiKey, $videoId);
 		$response = $this->httpClient->get($url, [
-			'http_errors' => FALSE,
+			'http_errors' => false,
 		]);
 
 		if ($response->getStatusCode() !== 200) {
@@ -102,7 +99,7 @@ class Reader extends Nette\Object
 		$snippet = $data->items[0]->snippet;
 		$details = $data->items[0]->contentDetails;
 
-		$video = new Video;
+		$video = new Video();
 
 		$video->title = $snippet->title;
 		$video->description = $snippet->description;
@@ -119,5 +116,4 @@ class Reader extends Nette\Object
 
 		return $video;
 	}
-
 }
