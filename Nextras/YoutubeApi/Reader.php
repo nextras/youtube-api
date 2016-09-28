@@ -11,9 +11,9 @@
 
 namespace Nextras\YoutubeApi;
 
+use Composer\CaBundle\CaBundle;
 use DateInterval;
-use GuzzleHttp;
-use Kdyby\CurlCaBundle\CertificateHelper;
+use GuzzleHttp\Client;
 use Nette;
 
 
@@ -22,13 +22,22 @@ class Reader extends Nette\Object
 	/** @var string */
 	private $apiKey;
 
+	/** @var Client */
+	private $httpClient;
+
 	/** @var string */
 	protected $youtubeFetchUrl = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
 
-	public function __construct($apiKey)
+	public function __construct($apiKey, Client $httpClient = null)
 	{
 		$this->apiKey = $apiKey;
+		if ($httpClient === null) {
+			$httpClient = new Client([
+				'verify' => CaBundle::getSystemCaRootBundlePath(),
+			]);
+		}
+		$this->httpClient = $httpClient;
 	}
 
 
@@ -71,8 +80,9 @@ class Reader extends Nette\Object
 	protected function getData($videoId)
 	{
 		$url = sprintf($this->youtubeFetchUrl, $this->apiKey, $videoId);
-		$client = new GuzzleHttp\Client;
-		$response = $client->request('GET', $url, ['verify' => CertificateHelper::getCaInfoFile(), 'http_errors' => FALSE]);
+		$response = $this->httpClient->get($url, [
+			'http_errors' => FALSE,
+		]);
 
 		if ($response->getStatusCode() !== 200) {
 			throw new \RuntimeException("Unable to parse YouTube video: '{$videoId}' ({$response->getStatusCode()}) {$response->getReasonPhrase()}");

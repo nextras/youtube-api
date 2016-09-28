@@ -19,7 +19,7 @@
 		"php": ">=5.4",
 		"nette/utils": "~2.2",
 		"nette/http": "~2.2",
-		"kdyby/curl-ca-bundle": ">=1.0.0",
+		"composer/ca-bundle": "~1.0",
 		"guzzlehttp/guzzle": "~6.2"
 	},
 	"require-dev": {
