@@ -12,7 +12,7 @@
 namespace Nextras\YoutubeApi;
 
 use DateInterval;
-use Kdyby\Curl\CurlWrapper;
+use GuzzleHttp;
 use Kdyby\CurlCaBundle\CertificateHelper;
 use Nette;
 
@@ -21,6 +21,9 @@ class Reader extends Nette\Object
 {
 	/** @var string */
 	private $apiKey;
+
+	/** @var string */
+	protected $youtubeFetchUrl = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
 
 	public function __construct($apiKey)
@@ -67,15 +70,15 @@ class Reader extends Nette\Object
 
 	protected function getData($videoId)
 	{
-		$url = "https://www.googleapis.com/youtube/v3/videos?key={$this->apiKey}&part=snippet,contentDetails&id={$videoId}";
-		$curl = new CurlWrapper($url, Nette\Http\Request::GET);
-		$curl->setOption('CAINFO', CertificateHelper::getCaInfoFile());
+		$url = sprintf($this->youtubeFetchUrl, $this->apiKey, $videoId);
+		$client = new GuzzleHttp\Client;
+		$response = $client->request('GET', $url, ['verify' => CertificateHelper::getCaInfoFile(), 'http_errors' => FALSE]);
 
-		if (!($response = $curl->execute())) {
-			throw new \RuntimeException('Unable to parse YouTube video: ' .  $curl->error);
+		if ($response->getStatusCode() !== 200) {
+			throw new \RuntimeException("Unable to parse YouTube video: '{$videoId}' ({$response->getStatusCode()}) {$response->getReasonPhrase()}");
 		}
 
-		return $curl->response;
+		return $response->getBody()->getContents();
 	}
 
 
@@ -84,7 +87,7 @@ class Reader extends Nette\Object
 	{
 		$data = Nette\Utils\Json::decode($data);
 		if (!isset($data->items[0]->snippet) || !isset($data->items[0]->contentDetails)) {
-			throw new \RuntimeException();
+			throw new \RuntimeException("Empty YouTube response, probably wrong '{$videoId}' video id.");
 		}
 
 		$snippet = $data->items[0]->snippet;
