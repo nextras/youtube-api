@@ -104,6 +104,7 @@ class Reader extends Nette\Object
 		$video->title = $snippet->title;
 		$video->description = $snippet->description;
 		$video->url = 'http://www.youtube.com/watch?v=' . $videoId;
+		$video->embed = 'https://www.youtube.com/embed/' . $videoId;
 
 		$interval = new DateInterval($details->duration);
 		$video->duration = $interval->days * 86400 + $interval->h * 3600 + $interval->i * 60 + $interval->s;
