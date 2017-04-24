@@ -23,6 +23,7 @@ echo $video->title;
 echo $video->duration; // in sec
 echo $video->description;
 echo $video->url;
+echo $video->embed;
 foreach ($video->thumbs as $thumb) {
     echo $video->url; 
 }
