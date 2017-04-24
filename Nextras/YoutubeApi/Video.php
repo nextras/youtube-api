@@ -28,4 +28,7 @@ class Video extends Nette\Object
 
 	/** @var array */
 	public $thumbs;
+	
+	/** @var string */
+	public $embed;
 }
