@@ -12,8 +12,10 @@ use Nette;
 
 
 
-class Video extends Nette\Object
+class Video
 {
+	use Nette\SmartObject;
+
 	/** @var string */
 	public $title;
 

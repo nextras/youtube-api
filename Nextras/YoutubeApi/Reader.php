@@ -14,8 +14,10 @@ use GuzzleHttp\Client;
 use Nette;
 
 
-class Reader extends Nette\Object
+class Reader
 {
+	use Nette\SmartObject;
+
 	/** @var string */
 	const FETCH_URL = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
