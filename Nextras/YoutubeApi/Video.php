@@ -11,7 +11,6 @@ namespace Nextras\YoutubeApi;
 use Nette;
 
 
-
 class Video
 {
 	use Nette\SmartObject;
@@ -30,7 +29,7 @@ class Video
 
 	/** @var array */
 	public $thumbs;
-	
+
 	/** @var string */
 	public $embed;
 }

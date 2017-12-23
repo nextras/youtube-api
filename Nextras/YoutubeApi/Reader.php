@@ -17,7 +17,7 @@ class Reader
 {
 	use Nette\SmartObject;
 	/** @var string */
-	const FETCH_URL = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
+	private const FETCH_URL = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
 	/** @var string */
 	private $apiKey;
@@ -26,7 +26,7 @@ class Reader
 	private $httpClient;
 
 
-	public function __construct($apiKey, Client $httpClient = null)
+	public function __construct(string $apiKey, ?Client $httpClient = null)
 	{
 		$this->apiKey = $apiKey;
 		if ($httpClient === null) {
@@ -38,10 +38,8 @@ class Reader
 
 	/**
 	 * Fetches video data by youtube url
-	 * @param  string $videoUrl YouTube url
-	 * @return Video
 	 */
-	public function getVideoByUrl($videoUrl)
+	public function getVideoByUrl(string $videoUrl): Video
 	{
 		$url = new Nette\Http\Url($videoUrl);
 
@@ -59,17 +57,15 @@ class Reader
 
 
 	/**
-	 * Fetchs video data
-	 * @param  string $videoId
-	 * @return Video
+	 * Fetches video data
 	 */
-	public function getVideo($videoId)
+	public function getVideo(string $videoId): Video
 	{
 		return $this->parseData($this->getData($videoId), $videoId);
 	}
 
 
-	protected function getData($videoId)
+	protected function getData(string $videoId): string
 	{
 		$url = sprintf(self::FETCH_URL, $this->apiKey, $videoId);
 		$response = $this->httpClient->get($url, [
@@ -84,7 +80,7 @@ class Reader
 	}
 
 
-	protected function parseData($data, $videoId)
+	protected function parseData(string $data, string $videoId): Video
 	{
 		$data = Nette\Utils\Json::decode($data);
 		if (!isset($data->items[0]->snippet) || !isset($data->items[0]->contentDetails)) {
