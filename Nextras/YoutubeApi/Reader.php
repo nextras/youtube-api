@@ -8,7 +8,6 @@
 
 namespace Nextras\YoutubeApi;
 
-use Composer\CaBundle\CaBundle;
 use DateInterval;
 use GuzzleHttp\Client;
 use Nette;
@@ -17,7 +16,6 @@ use Nette;
 class Reader
 {
 	use Nette\SmartObject;
-
 	/** @var string */
 	const FETCH_URL = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
@@ -32,9 +30,7 @@ class Reader
 	{
 		$this->apiKey = $apiKey;
 		if ($httpClient === null) {
-			$httpClient = new Client([
-				'verify' => CaBundle::getSystemCaRootBundlePath(),
-			]);
+			$httpClient = new Client();
 		}
 		$this->httpClient = $httpClient;
 	}
@@ -42,7 +38,7 @@ class Reader
 
 	/**
 	 * Fetches video data by youtube url
-	 * @param  string  $videoUrl YouTube url
+	 * @param  string $videoUrl YouTube url
 	 * @return Video
 	 */
 	public function getVideoByUrl($videoUrl)
@@ -62,17 +58,15 @@ class Reader
 	}
 
 
-
 	/**
 	 * Fetchs video data
-	 * @param  string  $videoId
+	 * @param  string $videoId
 	 * @return Video
 	 */
 	public function getVideo($videoId)
 	{
 		return $this->parseData($this->getData($videoId), $videoId);
 	}
-
 
 
 	protected function getData($videoId)
@@ -88,7 +82,6 @@ class Reader
 
 		return $response->getBody()->getContents();
 	}
-
 
 
 	protected function parseData($data, $videoId)
