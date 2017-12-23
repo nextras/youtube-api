@@ -2,21 +2,16 @@
 	"name": "nextras/youtube-api",
 	"type": "library",
 	"description": "Youtube API library for Nette Framework.",
-	"keywords": ["nette", "youtube", "api", "youtube-api"],
+	"keywords": ["youtube", "api", "youtube-api"],
 	"license": ["MIT"],
 	"authors": [
-		{
-			"name": "Jan Skrasek",
-			"email": "hrach.cz@gmail.com",
-			"homepage": "http://jan.skrasek.com"
-		},
 		{
 			"name": "Nextras Community",
 			"homepage": "https://github.com/nextras/youtube-api/graphs/contributors"
 		}
 	],
 	"require": {
-		"php": ">=5.6",
+		"php": ">=7.1",
 		"nette/utils": "~2.4",
 		"nette/http": "~2.2",
 		"guzzlehttp/guzzle": "~6.2"
@@ -26,7 +21,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "3.0-dev"
+			"dev-master": "3.1-dev"
 		}
 	},
 	"autoload": {
