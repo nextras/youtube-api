@@ -8,13 +8,8 @@
 
 namespace Nextras\YoutubeApi;
 
-use Nette;
-
-
 class Video
 {
-	use Nette\SmartObject;
-
 	/** @var string */
 	public $title;
 

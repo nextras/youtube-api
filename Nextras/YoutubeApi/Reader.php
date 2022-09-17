@@ -10,12 +10,12 @@ namespace Nextras\YoutubeApi;
 
 use DateInterval;
 use GuzzleHttp\Client;
-use Nette;
+use Nette\Http\Url;
+use Nette\Utils\Json;
 
 
 class Reader
 {
-	use Nette\SmartObject;
 	/** @var string */
 	private const FETCH_URL = 'https://www.googleapis.com/youtube/v3/videos?key=%s&part=snippet,contentDetails&id=%s';
 
@@ -41,7 +41,7 @@ class Reader
 	 */
 	public function getVideoByUrl(string $videoUrl): Video
 	{
-		$url = new Nette\Http\Url($videoUrl);
+		$url = new Url($videoUrl);
 
 		if (stripos($url->host, 'youtu.be') !== false) {
 			return $this->getVideo(trim($url->getPath(), '/'));
@@ -49,7 +49,7 @@ class Reader
 
 		$videoId = $url->getQueryParameter('v');
 		if (stripos($url->host, 'youtube.com') === false || $videoId === null) {
-			throw new Nette\InvalidArgumentException('videoUrl must be valid youtube url.');
+			throw new \InvalidArgumentException('videoUrl must be valid youtube url.');
 		}
 
 		return $this->getVideo($videoId);
@@ -82,7 +82,7 @@ class Reader
 
 	protected function parseData(string $data, string $videoId): Video
 	{
-		$data = Nette\Utils\Json::decode($data);
+		$data = Json::decode($data);
 		if (!isset($data->items[0]->snippet) || !isset($data->items[0]->contentDetails)) {
 			throw new \RuntimeException("Empty YouTube response, probably wrong '{$videoId}' video id.");
 		}
